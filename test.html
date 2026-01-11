@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Fortune Ritual – Fixed</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  height:300vh;
+  background:radial-gradient(circle at center,#140c1c,#050208);
+  font-family:Georgia,serif;
+}
+
+/* SCENE */
+.scene{
+  position:sticky;
+  top:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.stage{
+  width:900px;
+  height:620px;
+  background:radial-gradient(circle at top,#2a1736,#0b0612);
+  border-radius:24px;
+  position:relative;
+}
+
+/* TRADER */
+.trader{
+  position:absolute;
+  top:60px;
+  left:50%;
+  transform:translateX(-50%);
+  width:420px;
+  height:220px;
+  border-radius:20px;
+  background:linear-gradient(#3a2615,#1b0f08);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:#ffd36a;
+}
+
+/* TABLE */
+.table{
+  position:absolute;
+  bottom:90px;
+  left:50%;
+  transform:translateX(-50%);
+  width:700px;
+  height:95px;
+  background:linear-gradient(#3b2413,#1d1208);
+  border-radius:18px;
+  display:flex;
+  justify-content:space-evenly;
+  align-items:center;
+}
+
+/* CARD PATTERN */
+.card-pattern{
+  background: linear-gradient(135deg, #4a0e0e, #2a0505);
+  position: relative;
+  overflow: hidden;
+}
+
+/* STATIC CARDS */
+.static-card{
+  width:80px;
+  height:120px;
+  border-radius:10px;
+  border:2px solid rgba(255,215,120,.25);
+}
+
+/* CENTER CARD */
+.center-wrap{
+  width:80px;
+  height:120px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  position:absolute;
+  left:50%;
+  bottom:50%;
+  transform:translate(-50%,50%);
+}
+
+.center-card{
+  width:100%;
+  height:100%;
+  border-radius:10px;
+  border:2px solid rgba(255,215,120,.25);
+  position:relative;
+  transform-style:preserve-3d;
+  overflow:hidden;
+  --fracture:0;
+  --gold:0;
+}
+
+/* CRACKS */
+.center-card::before{
+  content:"";
+  position:absolute;
+  inset:-20%;
+  background:
+    repeating-conic-gradient(
+      from 0deg at center,
+      rgba(255,215,120,.9) 0deg 1deg,
+      transparent 1deg 14deg
+    );
+  mask-image:
+    radial-gradient(circle at center,
+      black 0%,
+      black calc(var(--fracture)*45%),
+      transparent calc(var(--fracture)*55%)
+    );
+  opacity:var(--fracture);
+  mix-blend-mode:screen;
+}
+
+/* GOLD OVERLAY */
+.center-card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,#ffd87a,#c9932f,#ffefb5);
+  opacity:var(--gold);
+}
+
+/* CANDLES */
+.candle {
+  position: absolute;
+  bottom: 20px;
+  width: 14px;
+  height: 40px;
+  background: linear-gradient(to bottom, #f4e4bc 0%, #d9b38c 50%, #b8860b 100%);
+  border-radius: 0 0 7px 7px;
+  box-shadow:
+    inset -2px 0 4px rgba(0,0,0,0.3),
+    2px 2px 6px rgba(0,0,0,0.4);
+}
+
+.candle::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 10px;
+  background: linear-gradient(to bottom, #333 0%, #111 100%);
+  border-radius: 1px;
+}
+
+.flame {
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 16px solid #ffaa00;
+  animation: flicker 0.1s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 4px #ffaa00);
+}
+
+.flame::before {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: -3px;
+  width: 6px;
+  height: 6px;
+  background: radial-gradient(circle, #ffdd44 20%, #ffaa00 50%, transparent 70%);
+  border-radius: 50% 50% 50% 0;
+  animation: flicker-glow 2s ease-in-out infinite;
+}
+@keyframes flicker {
+  0% { transform: translateX(-50%) scaleY(1); }
+  100% { transform: translateX(-50%) scaleY(1.2); }
+}
+
+/* SPARKLES */
+.sparkle{
+  position:absolute;
+  width:3px;
+  height:3px;
+  background:gold;
+  border-radius:50%;
+  opacity:0;
+  animation:floatUp 3s linear infinite;
+}
+@keyframes floatUp{
+  from{transform:translateY(0);opacity:1}
+  to{transform:translateY(-60px);opacity:0}
+}
+</style>
+</head>
+
+<body>
+
+<div class="scene">
+  <div class="stage">
+    <div class="trader">TRADER</div>
+
+    <div class="table">
+      <div class="static-card card-pattern"></div>
+      <div class="static-card card-pattern"></div>
+
+      <div class="center-wrap">
+        <div class="center-card card-pattern" id="card"></div>
+      </div>
+
+      <div class="static-card card-pattern"></div>
+      <div class="static-card card-pattern"></div>
+    </div>
+    <!-- LEFT CANDLE -->
+    <div class="candle" style="left:120px">
+      <div class="flame"></div>
+    </div>
+
+    <!-- RIGHT CANDLE -->
+    <div class="candle" style="right:120px">
+      <div class="flame"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const MAX_LIFT = 160;
+const ROTATE_START = 0.92;
+const card = document.getElementById("card");
+
+let p = 0;
+let spin = 0;
+let lift = 0;
+let targetLift = 0;
+
+/* sparkles */
+for(let i=0;i<14;i++){
+  const s=document.createElement("div");
+  s.className="sparkle";
+  s.style.left=Math.random()*100+"%";
+  s.style.bottom="10px";
+  card.appendChild(s);
+}
+
+/* SCROLL */
+window.addEventListener("scroll",()=>{
+  const max=document.body.scrollHeight-innerHeight;
+  p = Math.min(scrollY/max,1);
+  targetLift = Math.sin(p*Math.PI);
+});
+
+/* ANIMATION */
+function animate(){
+  lift += (targetLift - lift) * 0.08;
+  const liftProgress = Math.min(lift, 1);
+
+  if (liftProgress > ROTATE_START) spin += 0.8;
+
+  card.style.transform = `
+    translateY(${-liftProgress * MAX_LIFT}px)
+    rotateY(${liftProgress > ROTATE_START ? spin : 0}deg)
+  `;
+
+  const fracture = Math.min(liftProgress / 0.4, 1);
+  card.style.setProperty("--fracture", fracture);
+
+  /* ✅ GOLD — OLD + FULL AT 92% */
+  let baseGold = Math.max(0, (liftProgress - 0.45) / 0.35);
+  let fullGold = liftProgress >= 0.92
+    ? (liftProgress - 0.92) / 0.08
+    : 0;
+
+  let gold = Math.min(Math.max(baseGold, fullGold), 1);
+  card.style.setProperty("--gold", gold);
+
+  card.querySelectorAll(".sparkle").forEach(s=>{
+    s.style.opacity = gold;
+  });
+
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+
+</body>
+</html>
