@@ -1,297 +1,792 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<title>Fortune Ritual – Fixed</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Fortune Ritual – Samurai Trader</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
+  <style>
+    *{
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
 
-body{
-  height:300vh;
-  background:radial-gradient(circle at center,#140c1c,#050208);
-  font-family:Georgia,serif;
-}
+    body {
+      height: 300vh;
+      background: radial-gradient(circle at center, #140c1c, #050208);
+      font-family: Georgia, serif;
+    }
 
-/* SCENE */
-.scene{
-  position:sticky;
-  top:0;
-  height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
+    /* SCENE */
+    .scene {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-.stage{
-  width:900px;
-  height:620px;
-  background:radial-gradient(circle at top,#2a1736,#0b0612);
-  border-radius:24px;
-  position:relative;
-}
+    .stage {
+      width: 900px;
+      height: 620px;
+      background: radial-gradient(circle at top, #2a1736, #0b0612);
+      border-radius: 24px;
+      position: relative;
+    }
 
-/* TRADER */
-.trader{
-  position:absolute;
-  top:60px;
-  left:50%;
-  transform:translateX(-50%);
-  width:420px;
-  height:220px;
-  border-radius:20px;
-  background:linear-gradient(#3a2615,#1b0f08);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  color:#ffd36a;
-}
+/* ===============================
+   SAMURAI TRADER — REFINED
+================================ */
 
-/* TABLE */
-.table{
-  position:absolute;
-  bottom:90px;
-  left:50%;
-  transform:translateX(-50%);
-  width:700px;
-  height:95px;
-  background:linear-gradient(#3b2413,#1d1208);
-  border-radius:18px;
-  display:flex;
-  justify-content:space-evenly;
-  align-items:center;
-}
+    .trader {
+      position: relative;
+      margin: 0 auto;
+      width: 800px;
+      height: 300px;
+      background:
+        radial-gradient(circle at 70% 30%, rgba(255, 180, 80, .15), transparent 60%),
+        linear-gradient(180deg, #1b0b14 0%, #080305 100%);
+      border-radius: 30px;
+      border: 1px solid rgba(255, 215, 120, 0.1);
+      box-shadow:
+        inset 0 0 80px rgba(0, 0, 0, 0.8),
+        0 20px 50px rgba(0, 0, 0, 0.9),
+        0 0 0 10px #0e0509;
+      /* Outer rim */
+      overflow: hidden;
+    }
 
-/* CARD PATTERN */
-.card-pattern{
-  background: linear-gradient(135deg, #4a0e0e, #2a0505);
-  position: relative;
-  overflow: hidden;
-}
+    /* --- Shoji Walls (Realistic Grid) --- */
+    .wall-left,
+    .wall-right {
+      position: absolute;
+      top: 20px;
+      width: 90px;
+      height: 260px;
+      background-color: rgba(220, 210, 190, 0.9);
+      /* Creating the Shoji Grid Pattern */
+      background-image:
+        linear-gradient(90deg, transparent 90%, #3d2618 90%, #3d2618 100%),
+        linear-gradient(0deg, transparent 90%, #3d2618 90%, #3d2618 100%);
+      background-size: 100% 100%, 100% 25%;
+      /* Vertical bars, Horizontal bars */
+      box-shadow: 5px 0 20px rgba(0, 0, 0, 0.5);
+      opacity: 0.8;
+      border: 4px solid #2a1810;
+    }
 
-/* STATIC CARDS */
-.static-card{
-  width:80px;
-  height:120px;
-  border-radius:10px;
-  border:2px solid rgba(255,215,120,.25);
-}
+    .wall-left {
+      left: -10px;
+      transform: perspective(300px) rotateY(10deg);
+    }
 
-/* CENTER CARD */
-.center-wrap{
-  width:80px;
-  height:120px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  position:absolute;
-  left:50%;
-  bottom:50%;
-  transform:translate(-50%,50%);
-}
+    .wall-right {
+      right: -10px;
+      transform: perspective(300px) rotateY(-10deg);
+      background-position: left;
+      /* Align grid */
+    }
 
-.center-card{
-  width:100%;
-  height:100%;
-  border-radius:10px;
-  border:2px solid rgba(255,215,120,.25);
-  position:relative;
-  transform-style:preserve-3d;
-  overflow:hidden;
-  --fracture:0;
-  --gold:0;
-}
+    /* --- Lantern (Dynamic Lighting) --- */
+    .lantern {
+      position: absolute;
+      top: 15px;
+      right: 60px;
+      width: 40px;
+      height: 60px;
+      /* Paper texture gradient */
+      background: radial-gradient(circle at center, #fff5d6 0%, #ffcc66 60%, #ff9933 100%);
+      border-radius: 10px;
+      box-shadow:
+        0 0 40px rgba(255, 160, 50, 0.6),
+        inset 0 0 10px rgba(0, 0, 0, 0.1);
+      z-index: 10;
+      animation: swing 4s ease-in-out infinite alternate;
+      transform-origin: top center;
+    }
 
-/* CRACKS */
-.center-card::before{
-  content:"";
-  position:absolute;
-  inset:-20%;
-  background:
-    repeating-conic-gradient(
-      from 0deg at center,
-      rgba(255,215,120,.9) 0deg 1deg,
-      transparent 1deg 14deg
-    );
-  mask-image:
-    radial-gradient(circle at center,
-      black 0%,
-      black calc(var(--fracture)*45%),
-      transparent calc(var(--fracture)*55%)
-    );
-  opacity:var(--fracture);
-  mix-blend-mode:screen;
-}
+    /* Lantern Ribs */
+    .lantern::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(0deg,
+          transparent 0%,
+          transparent 15%,
+          rgba(0, 0, 0, 0.3) 15%,
+          rgba(0, 0, 0, 0.3) 16%);
+      border-radius: 10px;
+    }
 
-/* GOLD OVERLAY */
-.center-card::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:linear-gradient(135deg,#ffd87a,#c9932f,#ffefb5);
-  opacity:var(--gold);
-}
+    /* Lantern Cap/Base */
+    .lantern::before {
+      content: "";
+      position: absolute;
+      top: -5px;
+      left: -5px;
+      right: -5px;
+      height: 8px;
+      background: #2a1810;
+      border-radius: 4px;
+      box-shadow: 0 65px 0 #2a1810;
+      /* Bottom cap */
+    }
 
-/* CANDLES */
-.candle {
-  position: absolute;
-  bottom: 20px;
-  width: 14px;
-  height: 40px;
-  background: linear-gradient(to bottom, #f4e4bc 0%, #d9b38c 50%, #b8860b 100%);
-  border-radius: 0 0 7px 7px;
-  box-shadow:
-    inset -2px 0 4px rgba(0,0,0,0.3),
-    2px 2px 6px rgba(0,0,0,0.4);
-}
+    /* Lantern String */
+    .string {
+      position: absolute;
+      top: -20px;
+      right: 79px;
+      width: 2px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.3);
+      z-index: 9;
+    }
 
-.candle::before {
-  content: '';
-  position: absolute;
-  top: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 2px;
-  height: 10px;
-  background: linear-gradient(to bottom, #333 0%, #111 100%);
-  border-radius: 1px;
-}
+    /* --- Samurai (Body) --- */
+    .samurai {
+      position: absolute;
+      left: 50%;
+      bottom: -20px;
+      /* Slight cutoff for portrait look */
+      transform: translateX(-50%);
+      width: 320px;
+      height: 280px;
+      filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.8));
+    }
 
-.flame {
-  position: absolute;
-  top: -16px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-bottom: 16px solid #ffaa00;
-  animation: flicker 0.1s ease-in-out infinite alternate;
-  filter: drop-shadow(0 0 4px #ffaa00);
-}
+    /* Robe/Kimono Layers */
+    .robe-inner {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 180px;
+      background: linear-gradient(105deg, #241018 30%, #3a1a25 50%, #241018 70%);
+      border-radius: 60px 60px 0 0;
+      z-index: 1;
+    }
 
-.flame::before {
-  content: '';
-  position: absolute;
-  bottom: -12px;
-  left: -3px;
-  width: 6px;
-  height: 6px;
-  background: radial-gradient(circle, #ffdd44 20%, #ffaa00 50%, transparent 70%);
-  border-radius: 50% 50% 50% 0;
-  animation: flicker-glow 2s ease-in-out infinite;
-}
-@keyframes flicker {
-  0% { transform: translateX(-50%) scaleY(1); }
-  100% { transform: translateX(-50%) scaleY(1.2); }
-}
+    /* Collar overlap */
+    .robe-inner::before {
+      content: "";
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 80px;
+      background: #1a080c;
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+    }
 
-/* SPARKLES */
-.sparkle{
-  position:absolute;
-  width:3px;
-  height:3px;
-  background:gold;
-  border-radius:50%;
-  opacity:0;
-  animation:floatUp 3s linear infinite;
-}
-@keyframes floatUp{
-  from{transform:translateY(0);opacity:1}
-  to{transform:translateY(-60px);opacity:0}
-}
-</style>
+    /* Shoulder Armor (Sode) - Realistic Lamellar */
+    .armor-left,
+    .armor-right {
+      position: absolute;
+      top: 90px;
+      width: 100px;
+      height: 120px;
+      /* Metallic Gradient simulating plates */
+      background: repeating-linear-gradient(180deg,
+          #13294b 0%,
+          #1e3b63 15%,
+          #091428 16%,
+          #091428 25%);
+      box-shadow:
+        inset 2px 2px 5px rgba(255, 255, 255, 0.2),
+        inset -2px -2px 10px rgba(0, 0, 0, 0.8),
+        5px 10px 15px rgba(0, 0, 0, 0.5);
+      z-index: 3;
+    }
+
+    .armor-left {
+      left: 15px;
+      border-radius: 30px 10px 40px 40px;
+      transform: rotate(5deg);
+    }
+
+    .armor-right {
+      right: 15px;
+      border-radius: 10px 30px 40px 40px;
+      transform: rotate(-5deg);
+    }
+
+    /* Gold trim on armor */
+    .armor-left::after,
+    .armor-right::after {
+      content: "";
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      right: 10px;
+      height: 5px;
+      background: linear-gradient(90deg, #b8860b, #ffd700, #b8860b);
+      border-radius: 2px;
+    }
+
+    /* Head */
+    .head {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70px;
+      height: 90px;
+      background: linear-gradient(135deg, #e6c2a3, #c49a7a);
+      border-radius: 35px 35px 40px 40px;
+      z-index: 5;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Facial Shadows for realism */
+    .head::after {
+      content: "";
+      position: absolute;
+      top: 45px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 12px;
+      height: 10px;
+      background: rgba(0, 0, 0, 0.05);
+      /* Nose shadow */
+      border-radius: 50%;
+      filter: blur(2px);
+    }
+
+    /* Topknot */
+    .topknot {
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30px;
+      height: 35px;
+      background: #1b0f08;
+      border-radius: 15px 15px 5px 5px;
+      z-index: 4;
+    }
+
+    /* Hair Tie */
+    .topknot::before {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: -5px;
+      width: 40px;
+      height: 10px;
+      background: #fff;
+      border-radius: 5px;
+    }
+
+    /* Eyes - Closed/Meditative */
+    .eye-left,
+    .eye-right {
+      position: absolute;
+      top: 45px;
+      width: 14px;
+      height: 2px;
+      background: #2a1810;
+      border-radius: 2px;
+      opacity: 0.8;
+    }
+
+    .eye-left {
+      left: 18px;
+      transform: rotate(5deg);
+    }
+
+    .eye-right {
+      right: 18px;
+      transform: rotate(-5deg);
+    }
+
+    /* Mouth */
+    .mouth {
+      position: absolute;
+      top: 68px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 16px;
+      height: 2px;
+      background: #2a1810;
+      opacity: 0.6;
+    }
+
+    /* Neck Shadow */
+    .neck {
+      position: absolute;
+      top: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30px;
+      height: 20px;
+      background: #a67c5e;
+      z-index: 2;
+    }
+
+    /* --- Animations --- */
+    @keyframes lanternGlow {
+
+      0%,
+      100% {
+        opacity: 0.8;
+        filter: brightness(1);
+      }
+
+      50% {
+        opacity: 1;
+        filter: brightness(1.2);
+      }
+    }
+
+    @keyframes swing {
+      0% {
+        transform: rotate(2deg);
+      }
+
+      100% {
+        transform: rotate(-2deg);
+      }
+    }
+
+    /* Dynamic Glow Overlay for Lantern */
+    .glow-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 85% 20%, rgba(255, 200, 100, 0.15), transparent 40%);
+      pointer-events: none;
+      z-index: 20;
+      animation: lanternGlow 3s infinite;
+    }
+
+    /* BANDAGES */
+    .bandage-left {
+      position: absolute;
+      top: 90px;
+      left: 45px;
+      width: 20px;
+      height: 50px;
+      background: linear-gradient(90deg, #e8c4a5 20%, #d4a574 80%);
+      border-radius: 10px;
+      clip-path: polygon(0% 0%, 100% 10%, 100% 90%, 0% 100%);
+    }
+
+    .bandage-right {
+      position: absolute;
+      top: 90px;
+      right: 45px;
+      width: 20px;
+      height: 50px;
+      background: linear-gradient(90deg, #e8c4a5 20%, #d4a574 80%);
+      border-radius: 10px;
+      clip-path: polygon(0% 0%, 100% 10%, 100% 90%, 0% 100%);
+    }
+
+    /* CANDLES ON FLOOR */
+    .candle-floor {
+      position: absolute;
+      bottom: 20px;
+      width: 10px;
+      height: 24px;
+      background: linear-gradient(to bottom, #f4e4bc 0%, #d9b38c 60%, #b8860b 100%);
+      border-radius: 0 0 5px 5px;
+      box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+    }
+
+    .candle-floor::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1px;
+      height: 6px;
+      background: #333;
+    }
+
+    .flame-floor {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-bottom: 10px solid #ffaa00;
+      animation: flickerSmall 0.15s ease-in-out infinite alternate;
+      filter: drop-shadow(0 0 3px #ffaa00);
+    }
+
+    .candle-floor:nth-child(1) {
+      left: 80px;
+    }
+
+    .candle-floor:nth-child(2) {
+      left: 150px;
+    }
+
+    .candle-floor:nth-child(3) {
+      right: 150px;
+    }
+
+    .candle-floor:nth-child(4) {
+      right: 80px;
+    }
+
+    @keyframes flickerSmall {
+      0% {
+        border-bottom-color: #ffaa00;
+        transform: translateX(-50%) scale(1) rotate(-1deg);
+      }
+
+      100% {
+        border-bottom-color: #ffdd44;
+        transform: translateX(-50%) scale(1.1) rotate(1deg);
+      }
+    }
+
+    @keyframes lanternGlow {
+      0% {
+        box-shadow: 0 0 20px rgba(244, 208, 63, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+      }
+
+      100% {
+        box-shadow: 0 0 28px rgba(244, 208, 63, 0.8), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+      }
+    }
+
+    /* TABLE */
+    .table {
+      position: absolute;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 700px;
+      height: 95px;
+      background: linear-gradient(#3b2413, #1d1208);
+      border-radius: 18px;
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+    }
+
+    /* Rest of your existing styles remain unchanged */
+    .card-pattern {
+      background: linear-gradient(135deg, #4a0e0e, #2a0505);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .static-card {
+      width: 80px;
+      height: 120px;
+      border-radius: 10px;
+      border: 2px solid rgba(255, 215, 120, .25);
+    }
+
+    .center-wrap {
+      width: 80px;
+      height: 120px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      left: 50%;
+      bottom: 50%;
+      transform: translate(-50%, 50%);
+    }
+
+    .center-card {
+      width: 100%;
+      height: 100%;
+      border-radius: 10px;
+      border: 2px solid rgba(255, 215, 120, .25);
+      position: relative;
+      transform-style: preserve-3d;
+      overflow: hidden;
+      --fracture: 0;
+      --gold: 0;
+    }
+
+    .center-card::before {
+      content: "";
+      position: absolute;
+      inset: -20%;
+      background:
+        repeating-conic-gradient(from 0deg at center,
+          rgba(255, 215, 120, .9) 0deg 1deg,
+          transparent 1deg 14deg);
+      mask-image:
+        radial-gradient(circle at center,
+          black 0%,
+          black calc(var(--fracture)*45%),
+          transparent calc(var(--fracture)*55%));
+      opacity: var(--fracture);
+      mix-blend-mode: screen;
+    }
+
+    .center-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #ffd87a, #c9932f, #ffefb5);
+      opacity: var(--gold);
+    }
+
+    .sparkle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: gold;
+      border-radius: 50%;
+      opacity: 0;
+      animation: floatUp 3s linear infinite;
+    }
+
+    @keyframes floatUp {
+      from {
+        transform: translateY(0);
+        opacity: 1
+      }
+
+      to {
+        transform: translateY(-60px);
+        opacity: 0
+      }
+    }
+
+    /* STAGE CANDLES */
+    .candle {
+      position: absolute;
+      bottom: 20px;
+      width: 14px;
+      height: 40px;
+      background: linear-gradient(to bottom, #f4e4bc 0%, #d9b38c 50%, #b8860b 100%);
+      border-radius: 0 0 7px 7px;
+      box-shadow:
+        inset -2px 0 4px rgba(0, 0, 0, 0.3),
+        2px 2px 6px rgba(0, 0, 0, 0.4);
+    }
+
+    .candle::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2px;
+      height: 10px;
+      background: linear-gradient(to bottom, #333 0%, #111 100%);
+      border-radius: 1px;
+    }
+
+    .flame {
+      position: absolute;
+      top: -16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-bottom: 16px solid #ffaa00;
+      animation: flicker 0.1s ease-in-out infinite alternate;
+      filter: drop-shadow(0 0 4px #ffaa00);
+    }
+
+    .flame::before {
+      content: '';
+      position: absolute;
+      bottom: -12px;
+      left: -3px;
+      width: 6px;
+      height: 6px;
+      background: radial-gradient(circle, #ffdd44 20%, #ffaa00 50%, transparent 70%);
+      border-radius: 50% 50% 50% 0;
+      animation: flicker-glow 2s ease-in-out infinite;
+    }
+
+    @keyframes flicker {
+      0% {
+        border-bottom-color: #ffaa00;
+        transform: translateX(-50%) scale(1) rotate(-1deg);
+      }
+
+      50% {
+        border-bottom-color: #ffdd44;
+        transform: translateX(-50%) scale(1.05) rotate(1deg);
+      }
+
+      100% {
+        border-bottom-color: #ff8800;
+        transform: translateX(-50%) scale(0.95) rotate(-2deg);
+      }
+    }
+
+    @keyframes flicker-glow {
+
+      0%,
+      100% {
+        opacity: 0.8;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.1);
+      }
+    }
+
+    .candle-left {
+      left: 100px;
+    }
+
+    .candle-right {
+      right: 100px;
+    }
+  </style>
 </head>
 
 <body>
+  <div class="scene">
+    <div class="stage">
 
-<div class="scene">
-  <div class="stage">
-    <div class="trader">TRADER</div>
+      <!-- BEAUTIFUL SAMURAI TRADER -->
+      <div class="trader">
+        <!-- Background walls -->
+        <div class="wall-left"></div>
+        <div class="wall-right"></div>
 
-    <div class="table">
-      <div class="static-card card-pattern"></div>
-      <div class="static-card card-pattern"></div>
+        <!-- Hanging lantern -->
+        <div class="lantern"></div>
 
-      <div class="center-wrap">
-        <div class="center-card card-pattern" id="card"></div>
+        <!-- Samurai character -->
+        <div class="samurai">
+          <!-- Head -->
+          <div class="head">
+            <!-- Topknot hair -->
+            <div class="topknot"></div>
+            <!-- Eyes -->
+            <div class="eye-left"></div>
+            <div class="eye-right"></div>
+            <!-- Smile -->
+            <div class="smile"></div>
+          </div>
+
+          <!-- Left shoulder armor -->
+          <div class="armor-left"></div>
+          <!-- Right shoulder armor -->
+          <div class="armor-right"></div>
+
+          <!-- Bandages -->
+          <div class="bandage-left"></div>
+          <div class="bandage-right"></div>
+
+          <!-- Floor candles -->
+          <div class="candle-floor">
+            <div class="flame-floor"></div>
+          </div>
+          <div class="candle-floor">
+            <div class="flame-floor"></div>
+          </div>
+          <div class="candle-floor">
+            <div class="flame-floor"></div>
+          </div>
+          <div class="candle-floor">
+            <div class="flame-floor"></div>
+          </div>
+        </div>
       </div>
 
-      <div class="static-card card-pattern"></div>
-      <div class="static-card card-pattern"></div>
-    </div>
-    <!-- LEFT CANDLE -->
-    <div class="candle" style="left:120px">
-      <div class="flame"></div>
-    </div>
+      <!-- TABLE -->
+      <div class="table">
+        <div class="static-card card-pattern"></div>
+        <div class="static-card card-pattern"></div>
 
-    <!-- RIGHT CANDLE -->
-    <div class="candle" style="right:120px">
-      <div class="flame"></div>
+        <div class="center-wrap">
+          <div class="center-card card-pattern" id="card"></div>
+        </div>
+
+        <div class="static-card card-pattern"></div>
+        <div class="static-card card-pattern"></div>
+      </div>
+
+      <!-- Stage candles -->
+      <div class="candle candle-left">
+        <div class="flame"></div>
+      </div>
+      <div class="candle candle-right">
+        <div class="flame"></div>
+      </div>
     </div>
   </div>
-</div>
 
-<script>
-const MAX_LIFT = 160;
-const ROTATE_START = 0.92;
-const card = document.getElementById("card");
+  <script>
+    const MAX_LIFT = 160;
+    const ROTATE_START = 0.92;
+    const card = document.getElementById("card");
 
-let p = 0;
-let spin = 0;
-let lift = 0;
-let targetLift = 0;
+    let p = 0;
+    let spin = 0;
+    let lift = 0;
+    let targetLift = 0;
 
-/* sparkles */
-for(let i=0;i<14;i++){
-  const s=document.createElement("div");
-  s.className="sparkle";
-  s.style.left=Math.random()*100+"%";
-  s.style.bottom="10px";
-  card.appendChild(s);
-}
+    /* sparkles */
+    for (let i = 0; i < 14; i++) {
+      const s = document.createElement("div");
+      s.className = "sparkle";
+      s.style.left = Math.random() * 100 + "%";
+      s.style.bottom = "10px";
+      card.appendChild(s);
+    }
 
-/* SCROLL */
-window.addEventListener("scroll",()=>{
-  const max=document.body.scrollHeight-innerHeight;
-  p = Math.min(scrollY/max,1);
-  targetLift = Math.sin(p*Math.PI);
-});
+    /* SCROLL */
+    window.addEventListener("scroll", () => {
+      const max = document.body.scrollHeight - innerHeight;
+      p = Math.min(scrollY / max, 1);
+      targetLift = Math.sin(p * Math.PI);
+    });
 
-/* ANIMATION */
-function animate(){
-  lift += (targetLift - lift) * 0.08;
-  const liftProgress = Math.min(lift, 1);
+    /* ANIMATION */
+    function animate() {
+      lift += (targetLift - lift) * 0.08;
+      const liftProgress = Math.min(lift, 1);
 
-  if (liftProgress > ROTATE_START) spin += 0.8;
+      if (liftProgress > ROTATE_START) spin += 0.8;
 
-  card.style.transform = `
+      card.style.transform = `
     translateY(${-liftProgress * MAX_LIFT}px)
     rotateY(${liftProgress > ROTATE_START ? spin : 0}deg)
   `;
 
-  const fracture = Math.min(liftProgress / 0.4, 1);
-  card.style.setProperty("--fracture", fracture);
+      const fracture = Math.min(liftProgress / 0.4, 1);
+      card.style.setProperty("--fracture", fracture);
 
-  /* ✅ GOLD — OLD + FULL AT 92% */
-  let baseGold = Math.max(0, (liftProgress - 0.45) / 0.35);
-  let fullGold = liftProgress >= 0.92
-    ? (liftProgress - 0.92) / 0.08
-    : 0;
+      let baseGold = Math.max(0, (liftProgress - 0.45) / 0.35);
+      let fullGold = liftProgress >= 0.92
+        ? (liftProgress - 0.92) / 0.08
+        : 0;
 
-  let gold = Math.min(Math.max(baseGold, fullGold), 1);
-  card.style.setProperty("--gold", gold);
+      let gold = Math.min(Math.max(baseGold, fullGold), 1);
+      card.style.setProperty("--gold", gold);
 
-  card.querySelectorAll(".sparkle").forEach(s=>{
-    s.style.opacity = gold;
-  });
+      card.querySelectorAll(".sparkle").forEach(s => {
+        s.style.opacity = gold;
+      });
 
-  requestAnimationFrame(animate);
-}
-animate();
-</script>
-
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
 </body>
+
 </html>
